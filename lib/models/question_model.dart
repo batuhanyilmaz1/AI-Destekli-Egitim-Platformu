@@ -1,0 +1,90 @@
+class QuizQuestion {
+  final String question;
+  final List<String> options;
+  final String answer;
+  final String hint;
+
+  QuizQuestion({
+    required this.question,
+    required this.options,
+    required this.answer,
+    required this.hint,
+  });
+
+  factory QuizQuestion.fromJson(Map<String, dynamic> json) {
+    return QuizQuestion(
+      question: json['question']?.toString() ?? '',
+      options: List<String>.from(json['options'] ?? []),
+      answer: json['answer']?.toString() ?? '',
+      hint: json['hint']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'question': question,
+        'options': options,
+        'answer': answer,
+        'hint': hint,
+      };
+}
+
+class QuizCategory {
+  final String id;
+  final String name;
+  final String emoji;
+  final String description;
+  final String colorHex;
+  final String bgColorHex;
+
+  const QuizCategory({
+    required this.id,
+    required this.name,
+    required this.emoji,
+    required this.description,
+    required this.colorHex,
+    required this.bgColorHex,
+  });
+
+  static const List<QuizCategory> all = [
+    QuizCategory(
+      id: 'physics',
+      name: 'Fizik',
+      emoji: '⚛️',
+      description: 'Mekanik, elektrik, optik ve daha fazlası',
+      colorHex: '89B4CC',
+      bgColorHex: 'D6E9F3',
+    ),
+    QuizCategory(
+      id: 'chemistry',
+      name: 'Kimya',
+      emoji: '🧪',
+      description: 'Elementler, bileşikler ve tepkimeler',
+      colorHex: 'B89FCC',
+      bgColorHex: 'E8DFF5',
+    ),
+    QuizCategory(
+      id: 'biology',
+      name: 'Biyoloji',
+      emoji: '🌿',
+      description: 'Hücreler, organizmalar ve ekosistemler',
+      colorHex: '87A878',
+      bgColorHex: 'DDE8D7',
+    ),
+    QuizCategory(
+      id: 'cs',
+      name: 'Bilgisayar & Programlama',
+      emoji: '💻',
+      description: 'Algoritmalar, veri yapıları ve kodlama',
+      colorHex: 'E8A45A',
+      bgColorHex: 'FAEBD6',
+    ),
+    QuizCategory(
+      id: 'english',
+      name: 'İngilizce',
+      emoji: '🇬🇧',
+      description: 'Gramer, kelime bilgisi ve okuma',
+      colorHex: 'CC9494',
+      bgColorHex: 'F5E0E0',
+    ),
+  ];
+}
