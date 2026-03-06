@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="image.png" alt="Lumina Quiz Banner" width="180"/>
-
 # ✦ LUMINA QUIZ
 ### AI Destekli Eğitim Uygulaması
 
