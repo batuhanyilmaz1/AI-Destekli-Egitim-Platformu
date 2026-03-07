@@ -76,7 +76,7 @@
 ### 🏆 Gamification Sistemi
 - **XP Sistemi:** Her doğru cevap XP kazandırır (zorluk çarpanıyla)
 - **6 Seviye:** Aday → Öğrenci → Keşifçi → Bilge → Usta → Efsane
-- **14 Rozet:** İlk test, tam puan, seri, kategori, tüm kategoriler ve daha fazlası
+- **27 Rozet:** İlk test, tam puan, seri, kategori, tüm kategoriler ve daha fazlası
 - **Günlük Seri:** Art arda günler test çözerek seri oluştur
 
 ### 👤 Profil Sayfası
