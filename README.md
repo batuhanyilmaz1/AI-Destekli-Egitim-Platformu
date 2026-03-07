@@ -1,126 +1,205 @@
-# 📖 Lumina Quiz
+<div align="center">
 
-<<<<<<< HEAD
-<p align="center">
-  <img src="lumina.png" width="120" alt="Lumina Quiz App Icon" />
-</p>
-=======
 # 📖 LUMINA QUIZ
 ### AI Destekli Eğitim Uygulaması
->>>>>>> 53db09685a4fcc5ff729ea87ad2f65662459bad1
 
-<p align="center">
-  <b>AI destekli, gamifikasyonlu ortaokul eğitim uygulaması</b><br/>
-  Flutter · Gemini AI · SQLite
-</p>
+*Ortaokul öğrencileri için Gemini AI destekli, kişiselleştirilmiş quiz deneyimi*
+
+<img src="lumina.png" width="130" alt="Lumina Quiz"/>
+
+</div>
 
 ---
 
-## Özellikler
+## 📱 Ekran Görüntüleri
 
-### 🧠 AI Quiz Sistemi
-- Google Gemini 2.5 Flash ile dinamik soru üretimi
-- 8 ders kategorisi: Fizik, Kimya, Biyoloji, Bilgisayar & Programlama, İngilizce, Matematik, Türkçe, Tarih
-- 3 zorluk seviyesi: Kolay / Orta / Zor
-- Her testte 20 soru, geri sayım sayacı
-- Test sonunda AI mentor analizi ve yanlış cevap açıklamaları
+<div align="center">
+<table>
+  <tr>
+    <td align="center">
+      <img src="images/ss3.png" width="260" alt="Ana Sayfa"/>
+      <br/><b>Ana Sayfa & Kategoriler</b>
+    </td>
+    <td align="center">
+      <img src="images/ss1.png" width="260" alt="Quiz & Sonuç"/>
+      <br/><b>Quiz & AI Mentor Sonucu</b>
+    </td>
+    <td align="center">
+      <img src="images/ss2.png" width="260" alt="Kitapçık"/>
+      <br/><b>Kitapçık & Tekrar Konuları</b>
+    </td>
+  </tr>
+</table>
+</div>
+
+---
+
+## 🎬 Demo Video
+
+<div align="center">
+
+<video src="images/video.mp4" controls width="320" style="border-radius:16px">
+  <a href="images/video.mp4">
+    <img src="images/ss1.png" width="320" alt="Demo Videoyu İzle"/>
+  </a>
+</video>
+
+> *Video oynatılmıyorsa [buraya tıkla](images/video.mp4)*
+
+</div>
+
+---
+
+## 🌟 Özellikler
+
+### 🎯 Quiz Sistemi
+- **8 Kategori:** Fizik · Kimya · Biyoloji · Bilgisayar & Programlama · İngilizce · Matematik · Türkçe · Tarih
+- **20 Soru** her testte — Gemini AI tarafından dinamik ve **çeşitli** şekilde üretilir
+- Her oturumda farklı alt konular, tekrar eden sorular engellenir
+- **3 Zorluk Seviyesi:** Kolay (5 dk) · Orta (10 dk) · Zor (14 dk)
+- Ortaokul müfredatına uygun (MEB 5-8. sınıf)
+- **⏸️ Test Duraklatma** — Testi istediğin zaman duraklat ve devam et
+- **✅ Soru Validasyonu** — AI çıktısı otomatik doğrulanır, hatalı sorular filtrelenir
+
+### 🤖 AI Mentor
+- Test sonunda Gemini 2.5 Flash ile kişisel analiz
+- Yanlış soruların nedenleri teşvik edici dille açıklanır
+- Performansa göre özelleştirilmiş tavsiyeler
 
 ### 🎯 Günlük Görev
-- 8 dersten herhangi birini seçerek 5 soruluk mini test
-- Günde **bir kez** çözülebilir (ana sayfa ve profil arasında senkronize)
-- Ekstra XP kazanma fırsatı
-- Tam puan için %20 bonus XP
+- Her gün **8 dersin herhangi birinden** 5 soruluk mini test
+- Günde **yalnızca bir kez** çözülebilir — Ana Sayfa ve Profil arasında tam senkronize
+- Tam puan için ekstra **%20 bonus XP**
+- Tamamlandığında ikisi de otomatik kilitlenir
 
-### 📊 Gamifikasyon & Level Sistemi
-10 seviyeli XP sistemi:
+### 🃏 Flashcard Modu
+- Çalışma notlarından otomatik üretilen flip kartlar
+- Dokunarak kartı çevir, kaydırarak ilerle
+- Kategori bazlı kart setleri
 
-<<<<<<< HEAD
-| Seviye | Unvan | XP Eşiği |
-|--------|-------|-----------|
-| 1 | 🌱 Aday | 0 |
-| 2 | 📖 Öğrenci | 150 |
-| 3 | 🔍 Meraklı | 400 |
-| 4 | 🧭 Keşifçi | 800 |
-| 5 | 🔬 Araştırmacı | 1.400 |
-| 6 | 🦉 Bilge | 2.200 |
-| 7 | ⚗️ Uzman | 3.300 |
-| 8 | 🏆 Usta | 4.800 |
-| 9 | 👑 Şampiyon | 6.800 |
-| 10 | ⭐ Efsane | 9.500 |
-=======
-### 🏆 Gamification Sistemi
+### 🏆 Gamifikasyon Sistemi
 - **XP Sistemi:** Her doğru cevap XP kazandırır (zorluk çarpanıyla)
-- **6 Seviye:** Aday → Öğrenci → Keşifçi → Bilge → Usta → Efsane
-- **27 Rozet:** İlk test, tam puan, seri, kategori, tüm kategoriler ve daha fazlası
+- **Tam puan bonusu:** Tüm soruları doğru yapınca +%20 XP
+- **10 Seviye:** Aday → Öğrenci → Meraklı → Keşifçi → Araştırmacı → Bilge → Uzman → Usta → Şampiyon → Efsane
+- **27 Rozet:** Kategori, seri, başarı, günlük görev ve gizli rozetler
 - **Günlük Seri:** Art arda günler test çözerek seri oluştur
->>>>>>> 53db09685a4fcc5ff729ea87ad2f65662459bad1
 
-### 🏅 Rozet Sistemi (27 Rozet)
-- Yeni kazanılan rozetler profil sekmesinde bildirim olarak gösterilir
-- Rozetler otomatik açılmaz; kullanıcı tıklayınca altın ışıklı animasyon ile açılır
-- Kategori uzmanlık rozetleri, seri rozetleri, başarı rozetleri ve gizli rozetler
+### 🏅 Rozet Sistemi
+- Yeni kazanılan rozetler profil sekmesinde **bildirim sayacı** olarak gösterilir
+- Rozetler otomatik açılmaz — rozete tıklayınca **altın ışıklı animasyon** ile açılır
+- Açılmamış rozetler 🔒 kilitli görünür, açılanlar ✓ ile işaretlenir
 
-### 📝 Test Geçmişi & Yanlış Analizi
-- Tüm tamamlanan testler tarih/skor bilgisiyle listelenir
-- Herhangi bir teste tıklayarak yanlış yapılan soruları, verilen yanlış cevabı, doğru cevabı ve ipucunu görüntüle
-- Tüm sorular doğruysa özel tebrik ekranı
+### 👤 Profil Sayfası
+- XP çubuğu, mevcut seviye ikonu, bir sonraki seviyeye kalan XP
+- **Rozetler** — Kazanılmış / kilitli tüm rozetler + bildirim
+- **Gelişim Grafiği** — Kategori bazlı başarı çubukları
+- **Test Geçmişi** — Tüm geçmiş testler (sola kaydırarak sil)
+- **Karanlık Mod** toggle
 
-### 📚 Ek Özellikler
-- **Flashcard Modu**: Konuları kartlarla pekiştir
-- **Çalışma Kitapçığı**: Teste girmeden önce özet oku
-- **Gelişim Grafiği**: Kategori bazlı başarı analizi
-- **Karanlık Mod**: Göz dostu gece teması
-- **Çalışma Serisi (Streak)**: Günlük düzenli çalışma takibi
+### 📖 Çalışma Kitapçığı
+- AI kullanmadan, hazır yazılmış ders notları
+- Tüm kategoriler için konu özetleri ve anahtar noktalar
+- Teste girmeden önce çalışma imkânı
 
----
-
-## Teknik Altyapı
-
-| Bileşen | Teknoloji |
-|---------|-----------|
-| Framework | Flutter 3.x |
-| AI | Google Gemini 2.5 Flash REST API |
-| Veritabanı | SQLite (sqflite) |
-| State | ValueNotifier + setState |
-| Veri Saklama | SharedPreferences |
-| Animasyon | Flutter Animation Controllers |
+### ✨ Kullanıcı Deneyimi
+- 🌙 **Karanlık Mod** desteği
+- Pastel renk paleti (Sage Green · Soft Blue · Pale Yellow)
+- Doğru cevap: 💚 yumuşak yeşil parlama + hafif titreşim
+- Yanlış cevap: ❤️ kırmızı uyarı + ekran sarsılma animasyonu
+- **Sonuç Paylaşma** — Test sonucunu arkadaşlarınla paylaş
+- Özel estetik alt navigasyon çubuğu (Ana Sayfa / Profil)
+- Yumuşak sayfa geçişleri ve staggered animasyonlar
 
 ---
 
-## Kurulum
+## 🛠️ Teknoloji Yığını
 
-<<<<<<< HEAD
-=======
+| Katman | Teknoloji |
+|--------|-----------|
+| **Framework** | Flutter 3.x |
+| **Dil** | Dart 3.x |
+| **AI** | Google Gemini 2.5 Flash (REST API v1beta) |
+| **Veritabanı** | SQLite (`sqflite`) |
+| **State Yönetimi** | ValueNotifier + setState |
+| **Yerel Depolama** | `shared_preferences` |
+| **HTTP** | `http` paketi |
+| **Paylaşım** | `share_plus` |
+| **Cihaz Bilgisi** | `device_info_plus` |
+
+---
+
+## 📁 Proje Yapısı
+
 ```
 lib/
-├── main.dart                       # Giriş noktası, bottom nav, theme mode
+├── main.dart                        # Giriş noktası, bottom nav, global notifier'lar
 ├── theme/
-│   └── app_theme.dart              # Renk paleti, light & dark tema
+│   └── app_theme.dart               # Renk paleti, light & dark tema
 ├── models/
-│   ├── question_model.dart         # Quiz sorusu & kategoriler
-│   ├── quiz_session_model.dart     # Oturum & hata modelleri
-│   ├── difficulty_model.dart       # Zorluk seviyeleri
-│   └── gamification_model.dart    # XP, rozet, seviye sistemi
+│   ├── question_model.dart          # Quiz sorusu & kategoriler (8 adet)
+│   ├── quiz_session_model.dart      # Oturum & hata modelleri
+│   ├── difficulty_model.dart        # Zorluk seviyeleri
+│   └── gamification_model.dart     # XP, 10 seviye, 27 rozet
 ├── services/
-│   ├── gemini_service.dart         # Gemini API entegrasyonu
-│   ├── database_service.dart       # SQLite CRUD işlemleri
-│   └── gamification_service.dart  # XP hesaplama, rozet verme
+│   ├── gemini_service.dart          # Gemini API entegrasyonu
+│   ├── database_service.dart        # SQLite CRUD işlemleri (v3)
+│   ├── gamification_service.dart   # XP hesaplama, rozet verme
+│   └── badge_notification_service.dart  # Rozet bildirim sistemi
 ├── data/
-│   └── study_content.dart         # Hazır ders notları
+│   └── study_content.dart          # Hazır ders notları
 └── views/
-    ├── splash_screen.dart          # Açılış & cihaz kaydı
-    ├── home_page.dart              # Ana sayfa & günlük görev
-    ├── profile_page.dart           # Profil & ayarlar
+    ├── splash_screen.dart           # Açılış & cihaz kaydı
+    ├── home_page.dart               # Ana sayfa & günlük görev
+    ├── profile_page.dart            # Profil & ayarlar
     ├── profile/
-    │   ├── badge_page.dart         # Rozet koleksiyonu
-    │   └── chart_page.dart         # Gelişim grafiği
-    ├── difficulty_sheet.dart       # Zorluk seçimi
-    ├── quiz_page.dart              # Quiz ekranı (duraklatma destekli)
-    ├── result_page.dart            # Sonuç, XP, AI analizi, paylaşım
-    ├── flashcard_page.dart         # Flip kart çalışma modu
-    ├── daily_challenge_page.dart   # Günlük 5 soruluk görev
-    ├── study_page.dart             # Çalışma kitapçığı
-    └── history_page.dart          # Geçmiş testler
+    │   ├── badge_page.dart          # Rozet koleksiyonu + animasyon
+    │   └── chart_page.dart          # Gelişim grafiği
+    ├── difficulty_sheet.dart        # Zorluk seçimi
+    ├── quiz_page.dart               # Quiz ekranı (duraklatma destekli)
+    ├── result_page.dart             # Sonuç, XP, AI analizi, paylaşım
+    ├── flashcard_page.dart          # Flip kart çalışma modu
+    ├── daily_challenge_page.dart    # Günlük 5 soruluk görev (8 kategori)
+    ├── study_page.dart              # Çalışma kitapçığı
+    └── history_page.dart           # Geçmiş testler
+```
+
+---
+
+## 🗄️ Veritabanı Şeması
+
+```sql
+CREATE TABLE QuizSessions (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    category         TEXT    NOT NULL,
+    score            INTEGER NOT NULL,
+    total_questions  INTEGER NOT NULL DEFAULT 20,
+    date             DATETIME NOT NULL,
+    duration_seconds INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE Mistakes (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id     INTEGER NOT NULL,
+    question       TEXT    NOT NULL,
+    user_choice    TEXT    NOT NULL,
+    correct_answer TEXT    NOT NULL,
+    hint           TEXT    DEFAULT '',
+    FOREIGN KEY (session_id) REFERENCES QuizSessions(id)
+);
+
+CREATE TABLE UserProfile (
+    id                   INTEGER PRIMARY KEY DEFAULT 1,
+    total_xp             INTEGER NOT NULL DEFAULT 0,
+    streak_days          INTEGER NOT NULL DEFAULT 0,
+    last_quiz_date       TEXT,
+    last_challenge_date  TEXT,
+    challenge_count      INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE AwardedBadges (
+    badge_id   TEXT PRIMARY KEY,
+    awarded_at TEXT NOT NULL
+);
 ```
 
 ---
@@ -129,24 +208,29 @@ lib/
 
 ### ⭐ XP Kazanma
 
-Her doğru cevap XP kazandırır. Zorluk seviyesi çarpan etkisi yapar:
+Her doğru cevap XP kazandırır. Zorluk seviyesi çarpan etkisi yapar. Tüm soruları doğru yapınca **+%20 bonus** eklenir.
 
-| Zorluk | XP / Doğru | Maks. XP (20 soru) |
-|--------|-----------|---------------------|
-| Kolay  | 7 XP      | 140 XP              |
-| Orta   | 10 XP     | 200 XP              |
-| Zor    | 15 XP     | 300 XP              |
+| Zorluk | XP / Doğru | Maks. XP (20 soru) | Tam Puan Bonusu |
+|--------|-----------|---------------------|-----------------|
+| Kolay  | 7 XP      | 140 XP              | 168 XP          |
+| Orta   | 10 XP     | 200 XP              | 240 XP          |
+| Zor    | 15 XP     | 300 XP              | 360 XP          |
+| Günlük Görev (Orta) | 10 XP | 50 XP | 60 XP |
 
-### 🎓 Seviye Sıralaması
+### 🎓 Seviye Sıralaması (10 Seviye)
 
-| Seviye | Unvan      | Gerekli XP |
-|--------|------------|------------|
-| 1      | Aday       | 0 XP       |
-| 2      | Öğrenci    | 100 XP     |
-| 3      | Keşifçi    | 300 XP     |
-| 4      | Bilge      | 600 XP     |
-| 5      | Usta       | 1.000 XP   |
-| 6      | Efsane     | 2.000 XP   |
+| Seviye | İkon | Unvan | Gerekli XP |
+|--------|------|-------|-----------|
+| 1 | 🌱 | Aday | 0 XP |
+| 2 | 📖 | Öğrenci | 150 XP |
+| 3 | 🔍 | Meraklı | 400 XP |
+| 4 | 🧭 | Keşifçi | 800 XP |
+| 5 | 🔬 | Araştırmacı | 1.400 XP |
+| 6 | 🦉 | Bilge | 2.200 XP |
+| 7 | ⚗️ | Uzman | 3.300 XP |
+| 8 | 🏆 | Usta | 4.800 XP |
+| 9 | 👑 | Şampiyon | 6.800 XP |
+| 10 | ⭐ | Efsane | 9.500 XP |
 
 ### 🏆 Rozet Koleksiyonu (27 Rozet)
 
@@ -229,26 +313,100 @@ cd lumina-quiz
 ```
 
 ### 2. Bağımlılıkları Yükle
->>>>>>> 53db09685a4fcc5ff729ea87ad2f65662459bad1
 ```bash
-git clone https://github.com/kullanici/fuarProjesi.git
-cd fuarProjesi
 flutter pub get
+```
+
+### 3. API Anahtarını Ayarla
+
+`lib/services/gemini_service.dart` dosyasını aç ve API anahtarını gir:
+
+```dart
+static const String _apiKey = 'BURAYA_API_ANAHTARINI_YAZ';
+```
+
+> ⚠️ **Güvenlik Notu:** Prodüksiyon ortamında API anahtarını environment variable olarak saklayın.
+
+### 4. Gemini API Kurulumu
+
+1. [Google AI Studio](https://aistudio.google.com/app/apikey) adresine git
+2. Yeni bir API anahtarı oluştur
+3. [Google Cloud Console](https://console.cloud.google.com) üzerinden **billing** hesabını aktifleştir
+4. **Generative Language API**'yi etkinleştir
+
+### 5. Uygulamayı Çalıştır
+```bash
 flutter run
 ```
 
-> **Not:** `lib/services/gemini_service.dart` içindeki `_apiKey` değişkenine kendi Gemini API anahtarınızı girmeniz gerekir.
-
----
-
-## APK
-
-Release APK: `build/app/outputs/flutter-apk/app-release.apk`
-
+### 6. Release APK Oluştur
 ```bash
 flutter build apk --release
+# Çıktı: build/app/outputs/flutter-apk/app-release.apk
 ```
 
 ---
 
-<p align="center">Ortaokul öğrencileri için AI destekli akıllı öğrenme deneyimi 🌱</p>
+## 🔑 Gemini API Konfigürasyonu
+
+Uygulama **Google Gemini 2.5 Flash** modelini kullanır:
+
+- **Endpoint:** `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
+- **Ücretsiz Katman:** 15 istek/dakika · 1.500 istek/gün
+- **Sistem Prompt:** Ortaokul MEB müfredatına uygun, çeşitli ve tekrarsız soru üretimi + AI mentor analizi
+
+---
+
+## 📋 Quiz Akışı
+
+```
+Açılış Animasyonu (Cihaz Kaydı)
+        ↓
+   Ana Sayfa (Bottom Nav: Ana / Profil)
+   ├── 🎯 Günlük Görev (8 ders · 5 soru · Günde 1 kez · XP bonus)
+   ├── 📖 Çalışma Kitapçığı  →  Ders Notları
+   └── Kategori Seç
+              ↓
+     Zorluk Seviyesi Seç
+     (Kolay / Orta / Zor)
+              ↓
+    AI Soru Üretimi + Validasyon (Gemini)
+    (Oturum kodu ile her seferinde farklı sorular)
+              ↓
+       Quiz (20 Soru) + Duraklatma
+       ├── ✅ Doğru → Yeşil parlama + titreşim
+       └── ❌ Yanlış → Kırmızı + sarsılma
+              ↓
+      Sonuç & AI Mentor Analizi
+      ├── ⭐ XP Kazanıldı (tam puan bonusu dahil)
+      ├── 🏆 Yeni Rozet bildirimi (varsa)
+      └── 📤 Paylaş
+              ↓
+   SQLite'a Kaydet + Seri Güncelle
+              ↓
+   Profil → Rozetler → Tıkla & Altın Animasyonla Aç ✨
+```
+
+---
+
+## 🤝 Katkıda Bulunma
+
+1. Repoyu fork'la
+2. Feature branch oluştur (`git checkout -b feature/yeni-ozellik`)
+3. Değişikliklerini commit'le (`git commit -m 'feat: yeni özellik eklendi'`)
+4. Branch'ini push'la (`git push origin feature/yeni-ozellik`)
+5. Pull Request aç
+
+---
+
+## 📄 Lisans
+
+Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
+
+---
+
+<div align="center">
+
+**HAYEF Öğrenme Fuarı 2026** için geliştirilmiştir
+
+</div>
