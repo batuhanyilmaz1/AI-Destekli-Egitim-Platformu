@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✦ LUMINA QUIZ
+# 📖 LUMINA QUIZ
 ### AI Destekli Eğitim Uygulaması
 
 *Ortaokul öğrencileri için Gemini AI destekli, kişiselleştirilmiş quiz deneyimi*
