@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 import '../models/question_model.dart';
 import '../models/difficulty_model.dart';
 import '../services/gemini_service.dart';
@@ -22,7 +23,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late Animation<Offset> _headerSlide;
   bool _isLoading = false;
   String? _loadingCategory;
-  bool _challengeDoneToday = false;
   int _totalXP = 0;
 
   @override
@@ -46,16 +46,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<void> _loadProfileData() async {
     try {
       final raw = await DatabaseService().getUserProfile();
-      final lastChallenge = raw['last_challenge_date'] as String?;
-      final today = DateTime.now();
-      bool doneToday = false;
-      if (lastChallenge != null) {
-        final d = DateTime.parse(lastChallenge);
-        doneToday = d.year == today.year && d.month == today.month && d.day == today.day;
-      }
       if (mounted) {
         setState(() {
-          _challengeDoneToday = doneToday;
           _totalXP = raw['total_xp'] as int? ?? 0;
         });
       }
@@ -324,106 +316,109 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
 
   Widget _buildDailyChallengeBanner() {
-    return GestureDetector(
-      onTap: _challengeDoneToday
-          ? null
-          : () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const DailyChallengePage()),
-              );
-              _loadProfileData();
-            },
-      child: AnimatedOpacity(
-        opacity: _challengeDoneToday ? 0.6 : 1.0,
-        duration: const Duration(milliseconds: 300),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: _challengeDoneToday
-                ? const LinearGradient(
-                    colors: [Color(0xFF9EAD9F), Color(0xFF9EAD9F)])
-                : const LinearGradient(
-                    colors: [Color(0xFFE8A45A), Color(0xFFE8735A)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+    return ValueListenableBuilder<bool>(
+      valueListenable: challengeDoneTodayNotifier,
+      builder: (context, done, _) {
+        return GestureDetector(
+          onTap: done
+              ? null
+              : () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const DailyChallengePage()),
+                  );
+                  _loadProfileData();
+                },
+          child: AnimatedOpacity(
+            opacity: done ? 0.65 : 1.0,
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: done
+                    ? const LinearGradient(
+                        colors: [Color(0xFF9EAD9F), Color(0xFF9EAD9F)])
+                    : const LinearGradient(
+                        colors: [Color(0xFFE8A45A), Color(0xFFE8735A)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: (done ? AppColors.textLight : AppColors.timerOrange)
+                        .withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: (_challengeDoneToday
-                        ? AppColors.textLight
-                        : AppColors.timerOrange)
-                    .withValues(alpha: 0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Center(
-                  child: Text(
-                    _challengeDoneToday ? '✅' : '🎯',
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _challengeDoneToday
-                          ? 'Günlük Görev Tamamlandı!'
-                          : 'Günlük Görev',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+              child: Row(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Center(
+                      child: Text(
+                        done ? '✅' : '🎯',
+                        style: const TextStyle(fontSize: 24),
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      _challengeDoneToday
-                          ? 'Yarın tekrar görüşürüz! 🌟'
-                          : '5 soruluk mini test · Ekstra XP kazan',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.85),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          done ? 'Günlük Görev Tamamlandı!' : 'Günlük Görev',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          done
+                              ? 'Yarın tekrar görüşürüz! 🌟'
+                              : '5 soruluk mini test · Ekstra XP kazan',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.85),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (!done)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Text(
+                        'Başla',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                ],
               ),
-              if (!_challengeDoneToday)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.25),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    'Başla',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -440,11 +435,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
               color: AppColors.softBlue.withValues(alpha: 0.3), width: 1.5),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
                 color: AppColors.shadow,
                 blurRadius: 8,
-                offset: const Offset(0, 3))
+                offset: Offset(0, 3))
           ],
         ),
         child: Row(
@@ -592,28 +587,36 @@ class _CategoryCard extends StatefulWidget {
 
 class _CategoryCardState extends State<_CategoryCard>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _opacity;
-  late Animation<Offset> _slide;
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+  late final Animation<Offset> _slide;
   bool _pressed = false;
+
+  // Renkleri bir kez hesapla, her build'de tekrar hesaplama
+  late final Color _color;
+  late final Color _lightBgColor;
 
   @override
   void initState() {
     super.initState();
+    _color = Color(int.parse('FF${widget.category.colorHex}', radix: 16));
+    _lightBgColor =
+        Color(int.parse('FF${widget.category.bgColorHex}', radix: 16));
+
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 400),
     );
     _opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
-    _slide = Tween<Offset>(
-            begin: const Offset(0, 0.2), end: Offset.zero)
+    _slide = Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
         .animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    Future.delayed(Duration(milliseconds: 100 * widget.index), () {
+    // Kart gecikmesi: 60ms/kart (önceki 100ms'den daha hızlı)
+    Future.delayed(Duration(milliseconds: 60 * widget.index), () {
       if (mounted) _controller.forward();
     });
   }
@@ -624,17 +627,12 @@ class _CategoryCardState extends State<_CategoryCard>
     super.dispose();
   }
 
-  Color _fromHex(String hex) {
-    return Color(int.parse('FF$hex', radix: 16));
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final color = _fromHex(widget.category.colorHex);
-    final bgColor = isDark
-        ? color.withValues(alpha: 0.18)
-        : _fromHex(widget.category.bgColorHex);
+    final color = _color;
+    final bgColor =
+        isDark ? color.withValues(alpha: 0.18) : _lightBgColor;
     final cardColor = isDark ? AppColors.darkCard : AppColors.cardWhite;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textDark;
     final textLight = isDark ? AppColors.darkTextSecondary : AppColors.textLight;

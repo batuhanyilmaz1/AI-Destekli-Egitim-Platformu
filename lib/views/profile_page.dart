@@ -10,6 +10,8 @@ import 'flashcard_page.dart';
 import 'daily_challenge_page.dart';
 import 'profile/badge_page.dart';
 import 'profile/chart_page.dart';
+// ignore: unused_import
+import '../services/badge_notification_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -121,17 +123,32 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () => _navigate(const FlashcardPage()),
                     ),
                     const SizedBox(height: 10),
-                    _buildFeatureCard(
-                      emoji: '🎯',
-                      title: 'Günlük Görev',
-                      subtitle: '5 soruluk mini test, ekstra XP kazan',
-                      color: AppColors.timerOrange,
-                      bgColor: AppColors.lightPaleYellow,
-                      cardColor: cardColor,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      isDark: isDark,
-                      onTap: () => _navigate(const DailyChallengePage()),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: challengeDoneTodayNotifier,
+                      builder: (context, done, _) {
+                        return _buildFeatureCard(
+                          emoji: done ? '✅' : '🎯',
+                          title: 'Günlük Görev',
+                          subtitle: done
+                              ? 'Bugün tamamlandı · Yarın tekrar görüşürüz!'
+                              : '5 soruluk mini test, ekstra XP kazan',
+                          color: done
+                              ? AppColors.textLight
+                              : AppColors.timerOrange,
+                          bgColor: done
+                              ? (isDark
+                                  ? AppColors.darkSurface
+                                  : const Color(0xFFEEF0EE))
+                              : AppColors.lightPaleYellow,
+                          cardColor: cardColor,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          isDark: isDark,
+                          onTap: done
+                              ? null
+                              : () => _navigate(const DailyChallengePage()),
+                        );
+                      },
                     ),
                     const SizedBox(height: 10),
                     _buildFeatureCard(
@@ -188,6 +205,10 @@ class _ProfilePageState extends State<ProfilePage> {
     final level = profile.level;
     final progress = profile.levelProgress;
     final xpToNext = profile.xpToNext;
+    final levelIcon = XPLevel.getIcon(profile.totalXp);
+    final isMaxLevel = level >= XPLevel.maxLevel;
+    final nextLevelXp = XPLevel.nextLevelThreshold(profile.totalXp);
+    final currentLevelXp = XPLevel.currentLevelThreshold(profile.totalXp);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -210,36 +231,48 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Row(
             children: [
+              // Seviye ikonu
               Container(
-                width: 64,
-                height: 64,
+                width: 68,
+                height: 68,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: const Center(child: Text('🎓', style: TextStyle(fontSize: 32))),
+                child: Center(
+                  child: Text(levelIcon, style: const TextStyle(fontSize: 34)),
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Öğrenci',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
+                    Text(
+                      profile.levelTitle,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 3),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.25),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            'Seviye $level · ${profile.levelTitle}',
-                            style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600),
+                            isMaxLevel
+                                ? '⭐ Seviye $level / ${XPLevel.maxLevel} — MAX'
+                                : 'Seviye $level / ${XPLevel.maxLevel}',
+                            style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
                           ),
                         ),
                       ],
@@ -247,7 +280,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 4),
                     Text(
                       '🔥 ${profile.streakDays} günlük seri',
-                      style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.85)),
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.85)),
                     ),
                   ],
                 ),
@@ -256,17 +291,22 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Text(
                     '${profile.totalXp}',
-                    style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: Colors.white),
+                    style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white),
                   ),
-                  const Text('⭐ XP', style: TextStyle(fontSize: 11, color: Colors.white70)),
+                  const Text('⭐ XP',
+                      style: TextStyle(fontSize: 11, color: Colors.white70)),
                 ],
               ),
             ],
           ),
           const SizedBox(height: 16),
+          // XP ilerleme çubuğu
           Row(
             children: [
-              const Text('⚡', style: TextStyle(fontSize: 12)),
+              Text(levelIcon, style: const TextStyle(fontSize: 12)),
               const SizedBox(width: 6),
               Expanded(
                 child: ClipRRect(
@@ -274,18 +314,44 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: LinearProgressIndicator(
                     value: progress,
                     backgroundColor: Colors.white.withValues(alpha: 0.25),
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.white),
                     minHeight: 8,
                   ),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
-                xpToNext > 0 ? '+$xpToNext XP → Lv.${level + 1}' : '🏆 MAX',
-                style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.w600),
+                isMaxLevel
+                    ? '🏆 MAX Seviye!'
+                    : '+$xpToNext XP → Lv.${level + 1}',
+                style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600),
               ),
             ],
           ),
+          if (!isMaxLevel) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '$currentLevelXp XP',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.white.withValues(alpha: 0.65)),
+                ),
+                Text(
+                  '$nextLevelXp XP',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.white.withValues(alpha: 0.65)),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -320,7 +386,7 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 6, offset: const Offset(0, 2))],
+        boxShadow: const [BoxShadow(color: AppColors.shadow, blurRadius: 6, offset: Offset(0, 2))],
       ),
       child: Column(
         children: [
@@ -344,7 +410,7 @@ class _ProfilePageState extends State<ProfilePage> {
     required Color textPrimary,
     required Color textSecondary,
     required bool isDark,
-    required VoidCallback onTap,
+    VoidCallback? onTap,
   }) {
     final iconBg = isDark ? color.withValues(alpha: 0.15) : bgColor;
     return GestureDetector(
@@ -354,7 +420,7 @@ class _ProfilePageState extends State<ProfilePage> {
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: const Offset(0, 3))],
+          boxShadow: const [BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: Offset(0, 3))],
         ),
         child: Row(
           children: [
@@ -387,7 +453,7 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: const Offset(0, 3))],
+        boxShadow: const [BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: Offset(0, 3))],
       ),
       child: Column(
         children: [

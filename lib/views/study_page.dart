@@ -115,11 +115,11 @@ class _StudyPageState extends State<StudyPage>
       decoration: BoxDecoration(
         color: AppColors.cardWhite,
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
               color: AppColors.shadow,
               blurRadius: 8,
-              offset: const Offset(0, 2))
+              offset: Offset(0, 2))
         ],
       ),
       child: TabBar(
@@ -307,11 +307,11 @@ class _TopicCardState extends State<_TopicCard>
       decoration: BoxDecoration(
         color: AppColors.cardWhite,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
               color: AppColors.shadow,
               blurRadius: 8,
-              offset: const Offset(0, 3))
+              offset: Offset(0, 3))
         ],
       ),
       child: Column(

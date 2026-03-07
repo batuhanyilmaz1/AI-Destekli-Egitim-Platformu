@@ -159,13 +159,13 @@ class _ChartPageState extends State<ChartPage> with SingleTickerProviderStateMix
   }
 
   Widget _buildBars(Color cardColor, Color textPrimary, Color textSecondary, bool isDark) {
-    final categories = QuizCategory.all;
+    const categories = QuizCategory.all;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: const Offset(0, 3))],
+        boxShadow: const [BoxShadow(color: AppColors.shadow, blurRadius: 8, offset: Offset(0, 3))],
       ),
       child: Column(
         children: categories.asMap().entries.map((entry) {
@@ -247,7 +247,7 @@ class _ChartPageState extends State<ChartPage> with SingleTickerProviderStateMix
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [BoxShadow(color: AppColors.shadow, blurRadius: 6, offset: const Offset(0, 2))],
+          boxShadow: const [BoxShadow(color: AppColors.shadow, blurRadius: 6, offset: Offset(0, 2))],
         ),
         child: Row(
           children: [

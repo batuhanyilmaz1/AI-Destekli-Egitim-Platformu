@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../models/quiz_session_model.dart';
 import '../services/database_service.dart';
 import '../theme/app_theme.dart';
@@ -47,12 +46,25 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? AppColors.darkBg : AppColors.background;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text('Geçmiş Testler'),
+        backgroundColor: bgColor,
+        title: Text(
+          'Geçmiş Testler',
+          style: TextStyle(
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textDark,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
+          icon: Icon(
+            Icons.arrow_back_ios_rounded,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textDark,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -72,9 +84,11 @@ class _HistoryPageState extends State<HistoryPage> {
                           padding: const EdgeInsets.only(bottom: 8),
                           child: Text(
                             '${_sessions.length} test kaydı',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13,
-                              color: AppColors.textLight,
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.textLight,
                             ),
                           ),
                         ),
@@ -85,7 +99,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) =>
-                              _buildSessionCard(_sessions[index]),
+                              _buildSessionCard(_sessions[index], isDark),
                           childCount: _sessions.length,
                         ),
                       ),
@@ -97,20 +111,25 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: AppColors.paleSageGreen,
-              shape: BoxShape.circle,
+          Padding(
+            padding: EdgeInsets.all(24),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: AppColors.paleSageGreen,
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text('📋', style: TextStyle(fontSize: 44)),
+              ),
             ),
-            child: const Text('📋', style: TextStyle(fontSize: 44)),
           ),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: 20),
+          Text(
             'Henüz test yok',
             style: TextStyle(
               fontSize: 18,
@@ -118,8 +137,8 @@ class _HistoryPageState extends State<HistoryPage> {
               color: AppColors.textDark,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             'İlk testini tamamladığında\nsonuçların burada görünecek.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: AppColors.textMedium),
@@ -156,18 +175,15 @@ class _HistoryPageState extends State<HistoryPage> {
         child: Row(
           children: [
             Expanded(
-              child: _StatItem(
-                  label: 'Toplam Test', value: '$totalSessions'),
+              child: _StatItem(label: 'Toplam Test', value: '$totalSessions'),
             ),
             _VerticalDivider(),
             Expanded(
-              child: _StatItem(
-                  label: 'Ortalama', value: '%$avgPercent'),
+              child: _StatItem(label: 'Ortalama', value: '%$avgPercent'),
             ),
             _VerticalDivider(),
             Expanded(
-              child: _StatItem(
-                  label: 'En İyi', value: '%$bestPercent'),
+              child: _StatItem(label: 'En İyi', value: '%$bestPercent'),
             ),
           ],
         ),
@@ -175,7 +191,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Widget _buildSessionCard(QuizSession session) {
+  Widget _buildSessionCard(QuizSession session, bool isDark) {
     final percentage = (session.percentage * 100).round();
     final color = percentage >= 70
         ? AppColors.correctGreen
@@ -188,9 +204,14 @@ class _HistoryPageState extends State<HistoryPage> {
             ? const Color(0xFFFAEBD6)
             : AppColors.wrongRedLight;
 
-    final dateStr = DateFormat('dd.MM.yyyy  HH:mm').format(session.date);
+    // Locale gerektirmeyen güvenli tarih formatı
+    final d = session.date;
+    final dateStr =
+        '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}  '
+        '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
     final durationStr =
         '${session.durationSeconds ~/ 60}dk ${session.durationSeconds % 60}sn';
+    final cardColor = isDark ? AppColors.darkCard : AppColors.cardWhite;
 
     return Dismissible(
       key: Key(session.id.toString()),
@@ -202,8 +223,7 @@ class _HistoryPageState extends State<HistoryPage> {
           color: AppColors.wrongRed.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.delete_rounded,
-            color: AppColors.wrongRed),
+        child: const Icon(Icons.delete_rounded, color: AppColors.wrongRed),
       ),
       onDismissed: (_) {
         if (session.id != null) _deleteSession(session.id!);
@@ -212,13 +232,14 @@ class _HistoryPageState extends State<HistoryPage> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.cardWhite,
+          color: cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-                color: AppColors.shadow,
-                blurRadius: 8,
-                offset: const Offset(0, 3))
+              color: isDark ? AppColors.darkShadow : AppColors.shadow,
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
           ],
         ),
         child: Row(
@@ -248,26 +269,32 @@ class _HistoryPageState extends State<HistoryPage> {
                 children: [
                   Text(
                     session.category,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textDark,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textDark,
                     ),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     '${session.score}/${session.totalQuestions} doğru · $durationStr',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textMedium,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.textMedium,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     dateStr,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
-                      color: AppColors.textLight,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.textLight,
                     ),
                   ),
                 ],

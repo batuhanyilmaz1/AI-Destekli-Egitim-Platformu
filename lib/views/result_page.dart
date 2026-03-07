@@ -9,6 +9,7 @@ import '../services/gemini_service.dart';
 import '../services/gamification_service.dart';
 import '../theme/app_theme.dart';
 import '../main.dart';
+import '../services/badge_notification_service.dart';
 
 class ResultPage extends StatefulWidget {
   final QuizCategory category;
@@ -64,6 +65,12 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         total: widget.total,
         difficultyLabel: widget.difficulty.label,
       );
+      // Yeni rozetleri bildirim kuyruğuna ekle
+      if (badges.isNotEmpty) {
+        await BadgeNotificationService.addUnseenBadges(
+          badges.map((b) => b.name).toList(),
+        );
+      }
       if (mounted) {
         setState(() {
           _xpEarned = earned;
@@ -235,11 +242,11 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
               decoration: BoxDecoration(
                 color: AppColors.cardWhite,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                       color: AppColors.shadow,
                       blurRadius: 4,
-                      offset: const Offset(0, 2))
+                      offset: Offset(0, 2))
                 ],
               ),
               child: const Icon(Icons.home_rounded,
@@ -429,11 +436,11 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: AppColors.cardWhite,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
                 color: AppColors.shadow,
                 blurRadius: 10,
-                offset: const Offset(0, 4))
+                offset: Offset(0, 4))
           ],
         ),
         child: Column(
@@ -537,11 +544,11 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                     color: AppColors.wrongRed.withValues(alpha: 0.15)),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                       color: AppColors.shadow,
                       blurRadius: 6,
-                      offset: const Offset(0, 2))
+                      offset: Offset(0, 2))
                 ],
               ),
               child: Column(
@@ -694,11 +701,11 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.cardWhite,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
               color: AppColors.shadow,
               blurRadius: 8,
-              offset: const Offset(0, 3))
+              offset: Offset(0, 3))
         ],
       ),
       child: Column(

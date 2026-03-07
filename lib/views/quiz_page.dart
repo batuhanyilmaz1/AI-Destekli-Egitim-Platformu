@@ -300,11 +300,11 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
               decoration: BoxDecoration(
                 color: AppColors.cardWhite,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                       color: AppColors.shadow,
                       blurRadius: 4,
-                      offset: const Offset(0, 2))
+                      offset: Offset(0, 2))
                 ],
               ),
               child: const Icon(Icons.close_rounded,
@@ -343,8 +343,8 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
               decoration: BoxDecoration(
                 color: AppColors.cardWhite,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: const Offset(0, 2))
+                boxShadow: const [
+                  BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: Offset(0, 2))
                 ],
               ),
               child: Icon(
@@ -432,11 +432,11 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
           decoration: BoxDecoration(
             color: AppColors.cardWhite,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: AppColors.shadow,
                 blurRadius: 12,
-                offset: const Offset(0, 4),
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -519,11 +519,11 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
                     : borderColor,
                 width: borderColor == Colors.transparent ? 1 : 1.5,
               ),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: AppColors.shadow,
                   blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  offset: Offset(0, 2),
                 ),
               ],
             ),

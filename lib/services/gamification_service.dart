@@ -63,12 +63,24 @@ class GamificationService {
     required bool isChallenge,
   }) async {
     final awarded = <BadgeId>[];
-    final existing = await _db.getAwardedBadgeIds();
-    final stats = await _db.getStats();
-    final catCounts = await _db.getCategoryTestCounts();
-    final totalCorrect = await _db.getTotalCorrect();
-    final profile = await _db.getUserProfile();
+
+    // Tüm DB sorgularını paralel çalıştır
+    final results = await Future.wait<dynamic>([
+      _db.getAwardedBadgeIds(),
+      _db.getStats(),
+      _db.getCategoryTestCounts(),
+      _db.getTotalCorrect(),
+      _db.getUserProfile(),
+    ]);
+
+    final existing = results[0] as Set<String>;
+    final stats = results[1] as Map<String, dynamic>;
+    final catCounts = results[2] as Map<String, int>;
+    final totalCorrect = results[3] as int;
+    final profile = results[4] as Map<String, dynamic>;
+
     final streak = profile['streak_days'] as int? ?? 0;
+    final challengeCount = profile['challenge_count'] as int? ?? 0;
 
     Future<void> tryAward(BadgeId id) async {
       if (!existing.contains(id.name)) {
@@ -100,8 +112,6 @@ class GamificationService {
 
     // Günlük görev
     if (isChallenge) await tryAward(BadgeId.dailyChallenger);
-    final profile2 = await _db.getUserProfile();
-    final challengeCount = profile2['challenge_count'] as int? ?? 0;
     if (challengeCount >= 7) await tryAward(BadgeId.dailyChallenge7);
 
     // Toplam doğru

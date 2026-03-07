@@ -119,9 +119,37 @@ class BadgeInfo {
 
 class XPLevel {
   static const List<String> _titles = [
-    'Aday', 'Öğrenci', 'Keşifçi', 'Bilge', 'Usta', 'Efsane',
+    'Aday',        // 1
+    'Öğrenci',     // 2
+    'Meraklı',     // 3
+    'Keşifçi',     // 4
+    'Araştırmacı', // 5
+    'Bilge',       // 6
+    'Uzman',       // 7
+    'Usta',        // 8
+    'Şampiyon',    // 9
+    'Efsane',      // 10
   ];
-  static const List<int> _thresholds = [0, 100, 300, 600, 1000, 2000];
+
+  static const List<String> _icons = [
+    '🌱', '📖', '🔍', '🧭', '🔬', '🦉', '⚗️', '🏆', '👑', '⭐',
+  ];
+
+  // XP eşikleri — her seviye öncekinden ~%50 daha zor
+  static const List<int> _thresholds = [
+    0,    // Seviye 1: Aday
+    150,  // Seviye 2: Öğrenci
+    400,  // Seviye 3: Meraklı
+    800,  // Seviye 4: Keşifçi
+    1400, // Seviye 5: Araştırmacı
+    2200, // Seviye 6: Bilge
+    3300, // Seviye 7: Uzman
+    4800, // Seviye 8: Usta
+    6800, // Seviye 9: Şampiyon
+    9500, // Seviye 10: Efsane
+  ];
+
+  static int get maxLevel => _thresholds.length;
 
   static int getLevel(int xp) {
     for (int i = _thresholds.length - 1; i >= 0; i--) {
@@ -133,6 +161,11 @@ class XPLevel {
   static String getTitle(int xp) {
     final level = getLevel(xp);
     return _titles[(level - 1).clamp(0, _titles.length - 1)];
+  }
+
+  static String getIcon(int xp) {
+    final level = getLevel(xp);
+    return _icons[(level - 1).clamp(0, _icons.length - 1)];
   }
 
   static double getLevelProgress(int xp) {
@@ -149,9 +182,23 @@ class XPLevel {
     return _thresholds[level] - xp;
   }
 
+  static int nextLevelThreshold(int xp) {
+    final level = getLevel(xp);
+    if (level >= _thresholds.length) return _thresholds.last;
+    return _thresholds[level];
+  }
+
+  static int currentLevelThreshold(int xp) {
+    final level = getLevel(xp);
+    return _thresholds[(level - 1).clamp(0, _thresholds.length - 1)];
+  }
+
   static int calculateEarned(int score, int total, String difficulty) {
     final perCorrect = difficulty == 'Zor' ? 15 : difficulty == 'Orta' ? 10 : 7;
-    return score * perCorrect;
+    // Bonus: tüm soruları doğru yapınca %20 ek XP
+    final base = score * perCorrect;
+    if (score == total && total > 0) return (base * 1.2).round();
+    return base;
   }
 }
 

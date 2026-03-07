@@ -189,8 +189,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     ? AppColors.sageGreen
                     : (isDark ? AppColors.darkCard : AppColors.cardWhite),
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: const Offset(0, 2))
+                boxShadow: const [
+                  BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: Offset(0, 2))
                 ],
               ),
               child: Row(
@@ -357,11 +357,11 @@ class _FlipCardState extends State<_FlipCard> with SingleTickerProviderStateMixi
               : AppColors.shadow,
           width: isBack ? 1.5 : 1,
         ),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 20,
-            offset: const Offset(0, 8),
+            offset: Offset(0, 8),
           ),
         ],
       ),

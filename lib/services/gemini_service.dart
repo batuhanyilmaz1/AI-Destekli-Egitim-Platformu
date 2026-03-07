@@ -5,7 +5,7 @@ import '../models/quiz_session_model.dart';
 import '../models/difficulty_model.dart';
 
 class GeminiService {
-  static const String _apiKey = 'your_api_key';
+  static const String _apiKey = 'your_gemini_api_key';
   static const String _model = 'gemini-2.5-flash';
 
   static const String _baseUrl =
@@ -15,27 +15,39 @@ class GeminiService {
       "Sen 'Lumina Quiz' uygulamasının zeki ve nazik eğitim mentorusun. "
       "Görevin:\n"
       "1. Belirlenen kategoride, belirtilen zorluk seviyesinde, ORTAOKUL öğrencilerine (11-14 yaş) "
-      "yönelik müfredata uygun, yaratıcı ve öğretici 20 adet çoktan seçmeli soru üretmek. "
+      "yönelik müfredata uygun, yaratıcı ve öğretici çoktan seçmeli sorular üretmek. "
       "Sorular Türkiye Milli Eğitim Bakanlığı 5-8. sınıf müfredatına uygun olmalıdır.\n"
-      "2. Soruları şu JSON formatında ver: "
+      "2. ÇOK ÖNEMLİ - ÇEŞİTLİLİK KURALLARI:\n"
+      "   - Her soru üretiminde FARKLI konular ve alt başlıklar seç. "
+      "Aynı konuyu birden fazla soruda TEKRARLAMA.\n"
+      "   - Soruların yaklaşık yarısını uygulama/hesaplama, yarısını kavram/bilgi türünde yap.\n"
+      "   - Kategori içindeki TÜM ALT KONULARI dengeli şekilde dağıt. "
+      "Örneğin Fizik için: mekanik, elektrik, optik, ısı, ses, basınç gibi farklı alanları kullan.\n"
+      "   - Soru köklerini (soru cümlesini) birbirinden tamamen farklı yapıda kur.\n"
+      "   - Seçeneklerin sıralamasını ve doğru cevabın konumunu (A/B/C/D) rastgele değiştir.\n"
+      "3. Soruları şu JSON formatında ver: "
       '{ "question": "...", "options": ["A) ...", "B) ...", "C) ...", "D) ..."], "answer": "A) ...", "hint": "..." }\n'
-      "3. Cevap her zaman options listesindeki seçeneklerden biri olmalı.\n"
-      "4. Hint (ipucu) alanı kısa, teşvik edici ve öğretici olmalı.\n"
-      "5. Test sonunda kullanıcının yanlış yaptığı soruları alıp, bu yanlışların nedenlerini "
+      "4. Cevap her zaman options listesindeki seçeneklerden biri olmalı.\n"
+      "5. Hint (ipucu) alanı kısa, teşvik edici ve öğretici olmalı.\n"
+      "6. Test sonunda kullanıcının yanlış yaptığı soruları alıp, bu yanlışların nedenlerini "
       "ortaokul öğrencisinin anlayabileceği en basit ve teşvik edici dille 2-3 cümlede açıklamak.\n"
-      "6. Tonlaman her zaman sakinleştirici, sevecen, eğitici ve profesyonel olmalı.";
+      "7. Tonlaman her zaman sakinleştirici, sevecen, eğitici ve profesyonel olmalı.";
 
   Future<List<QuizQuestion>> generateQuestions(
     String category, {
     DifficultyLevel difficulty = DifficultyLevel.medium,
     int count = 20,
   }) async {
+    // Her istekte farklı sorular üretmek için rastgele tohumlama
+    final seed = DateTime.now().millisecondsSinceEpoch % 10000;
     final userPrompt = '''
 Kategori: $category
 Zorluk Seviyesi: ${difficulty.geminiLabel}
 Hedef Kitle: Ortaokul öğrencileri (Türkiye MEB müfredatı, 5-8. sınıf arası)
+Oturum Kodu: $seed (Her oturumda tamamen farklı sorular üret)
 
-Lütfen bu kategoride $count adet çoktan seçmeli soru üret.
+ÖNEMLİ: Bu kategorinin FARKLI alt konularından $count ÖZGÜN soru üret.
+Daha önce sorulmuş olabilecek sorulardan KAÇIN. Her soru farklı bir konu veya kavramı test etmeli.
 Sorular basit, anlaşılır Türkçe ile yazılmalı.
 Yanıtını SADECE aşağıdaki JSON formatında ver, başka hiçbir şey ekleme:
 

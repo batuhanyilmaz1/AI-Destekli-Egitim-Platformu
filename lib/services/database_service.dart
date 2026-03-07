@@ -20,7 +20,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createTables,
       onUpgrade: _onUpgrade,
     );
@@ -29,6 +29,11 @@ class DatabaseService {
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await _createGamificationTables(db);
+    }
+    if (oldVersion < 3) {
+      await db.execute(
+        'ALTER TABLE UserProfile ADD COLUMN challenge_count INTEGER NOT NULL DEFAULT 0',
+      );
     }
   }
 
@@ -73,7 +78,8 @@ class DatabaseService {
         total_xp INTEGER NOT NULL DEFAULT 0,
         streak_days INTEGER NOT NULL DEFAULT 0,
         last_quiz_date TEXT,
-        last_challenge_date TEXT
+        last_challenge_date TEXT,
+        challenge_count INTEGER NOT NULL DEFAULT 0
       )
     ''');
 
@@ -156,8 +162,8 @@ class DatabaseService {
     final rows = await db.query('UserProfile', where: 'id = 1');
     if (rows.isEmpty) {
       await db.rawInsert(
-          'INSERT OR IGNORE INTO UserProfile (id, total_xp, streak_days) VALUES (1, 0, 0)');
-      return {'total_xp': 0, 'streak_days': 0, 'last_quiz_date': null, 'last_challenge_date': null};
+          'INSERT OR IGNORE INTO UserProfile (id, total_xp, streak_days, challenge_count) VALUES (1, 0, 0, 0)');
+      return {'total_xp': 0, 'streak_days': 0, 'last_quiz_date': null, 'last_challenge_date': null, 'challenge_count': 0};
     }
     return rows.first;
   }
@@ -194,8 +200,9 @@ class DatabaseService {
   Future<void> recordChallengeDate(String todayIso) async {
     final db = await database;
     await db.rawUpdate(
-        'UPDATE UserProfile SET last_challenge_date = ? WHERE id = 1',
-        [todayIso]);
+      'UPDATE UserProfile SET last_challenge_date = ?, challenge_count = challenge_count + 1 WHERE id = 1',
+      [todayIso],
+    );
   }
 
   Future<Set<String>> getAwardedBadgeIds() async {
