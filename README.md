@@ -153,44 +153,6 @@ lib/
 
 ---
 
-## 🗄️ Veritabanı Şeması
-
-```sql
-CREATE TABLE QuizSessions (
-    id               INTEGER PRIMARY KEY AUTOINCREMENT,
-    category         TEXT    NOT NULL,
-    score            INTEGER NOT NULL,
-    total_questions  INTEGER NOT NULL DEFAULT 20,
-    date             DATETIME NOT NULL,
-    duration_seconds INTEGER NOT NULL DEFAULT 0
-);
-
-CREATE TABLE Mistakes (
-    id             INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id     INTEGER NOT NULL,
-    question       TEXT    NOT NULL,
-    user_choice    TEXT    NOT NULL,
-    correct_answer TEXT    NOT NULL,
-    hint           TEXT    DEFAULT '',
-    FOREIGN KEY (session_id) REFERENCES QuizSessions(id)
-);
-
-CREATE TABLE UserProfile (
-    id                   INTEGER PRIMARY KEY DEFAULT 1,
-    total_xp             INTEGER NOT NULL DEFAULT 0,
-    streak_days          INTEGER NOT NULL DEFAULT 0,
-    last_quiz_date       TEXT,
-    last_challenge_date  TEXT
-);
-
-CREATE TABLE AwardedBadges (
-    badge_id   TEXT PRIMARY KEY,
-    awarded_at TEXT NOT NULL
-);
-```
-
----
-
 ## 🎮 Seviye ve Rozet Sistemi
 
 ### ⭐ XP Kazanma
