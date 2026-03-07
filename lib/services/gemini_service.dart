@@ -5,7 +5,7 @@ import '../models/quiz_session_model.dart';
 import '../models/difficulty_model.dart';
 
 class GeminiService {
-  static const String _apiKey = 'AIzaSyBEgcoWNdNOJMjkHCz6DaF-42DiKm6en6A';
+  static const String _apiKey = 'your_gemini_api_key';
   static const String _model = 'gemini-2.5-flash';
 
   static const String _baseUrl =
