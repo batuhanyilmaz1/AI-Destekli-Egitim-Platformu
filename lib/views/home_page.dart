@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import '../models/question_model.dart';
 import '../models/difficulty_model.dart';
 import '../services/gemini_service.dart';
+import '../services/database_service.dart';
 import '../theme/app_theme.dart';
 import 'quiz_page.dart';
-import 'history_page.dart';
 import 'difficulty_sheet.dart';
 import 'study_page.dart';
+import 'daily_challenge_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +22,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late Animation<Offset> _headerSlide;
   bool _isLoading = false;
   String? _loadingCategory;
+  bool _challengeDoneToday = false;
+  int _totalXP = 0;
 
   @override
   void initState() {
@@ -37,6 +40,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       CurvedAnimation(parent: _headerController, curve: Curves.easeOut),
     );
     _headerController.forward();
+    _loadProfileData();
+  }
+
+  Future<void> _loadProfileData() async {
+    try {
+      final raw = await DatabaseService().getUserProfile();
+      final lastChallenge = raw['last_challenge_date'] as String?;
+      final today = DateTime.now();
+      bool doneToday = false;
+      if (lastChallenge != null) {
+        final d = DateTime.parse(lastChallenge);
+        doneToday = d.year == today.year && d.month == today.month && d.day == today.day;
+      }
+      if (mounted) {
+        setState(() {
+          _challengeDoneToday = doneToday;
+          _totalXP = raw['total_xp'] as int? ?? 0;
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -141,10 +164,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             child: CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(child: _buildHeader()),
-                  SliverPadding(
+                const SliverToBoxAdapter(child: SizedBox(height: 4)),
+                SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   sliver: SliverToBoxAdapter(
-                    child: _buildStatsRow(),
+                    child: _buildDailyChallengeBanner(),
                   ),
                 ),
                 const SliverToBoxAdapter(child: SizedBox(height: 10)),
@@ -220,6 +244,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _buildHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textDark;
+    final textSec = isDark ? AppColors.darkTextSecondary : AppColors.textMedium;
     return SlideTransition(
       position: _headerSlide,
       child: FadeTransition(
@@ -239,63 +266,53 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         height: 32,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [
-                              AppColors.sageGreen,
-                              AppColors.lightSageGreen
-                            ],
+                            colors: [AppColors.sageGreen, AppColors.lightSageGreen],
                           ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Center(
-                          child: Text('✦',
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.white)),
+                          child: Text('📖', style: TextStyle(fontSize: 18)),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Text(
+                      Text(
                         'Lumina Quiz',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textDark,
+                          color: textPrimary,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Bugün ne öğreniyoruz? 🌱',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textMedium,
-                    ),
+                    style: TextStyle(fontSize: 14, color: textSec),
                   ),
                 ],
               ),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const HistoryPage()),
-                  );
-                },
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.cardWhite,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.shadow,
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppColors.sageGreen, AppColors.softBlue],
                   ),
-                  child: const Icon(Icons.history_rounded,
-                      color: AppColors.textDark, size: 22),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    const Text('⭐', style: TextStyle(fontSize: 13)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$_totalXP XP',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -305,60 +322,107 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildStatsRow() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.sageGreen, AppColors.softBlue],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+
+  Widget _buildDailyChallengeBanner() {
+    return GestureDetector(
+      onTap: _challengeDoneToday
+          ? null
+          : () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const DailyChallengePage()),
+              );
+              _loadProfileData();
+            },
+      child: AnimatedOpacity(
+        opacity: _challengeDoneToday ? 0.6 : 1.0,
+        duration: const Duration(milliseconds: 300),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: _challengeDoneToday
+                ? const LinearGradient(
+                    colors: [Color(0xFF9EAD9F), Color(0xFF9EAD9F)])
+                : const LinearGradient(
+                    colors: [Color(0xFFE8A45A), Color(0xFFE8735A)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: (_challengeDoneToday
+                        ? AppColors.textLight
+                        : AppColors.timerOrange)
+                    .withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: Text(
+                    _challengeDoneToday ? '✅' : '🎯',
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _challengeDoneToday
+                          ? 'Günlük Görev Tamamlandı!'
+                          : 'Günlük Görev',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _challengeDoneToday
+                          ? 'Yarın tekrar görüşürüz! 🌟'
+                          : '5 soruluk mini test · Ekstra XP kazan',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withValues(alpha: 0.85),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (!_challengeDoneToday)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    'Başla',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.sageGreen.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  '20 Soru · 10 Dakika',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'AI mentor analizli\nkişisel quiz deneyimi',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Text('🤖', style: TextStyle(fontSize: 28)),
-          ),
-        ],
       ),
     );
   }
@@ -448,14 +512,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _buildSectionTitle(String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: AppColors.textDark,
+          color: isDark ? AppColors.darkTextPrimary : AppColors.textDark,
         ),
       ),
     );
@@ -565,8 +630,14 @@ class _CategoryCardState extends State<_CategoryCard>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = _fromHex(widget.category.colorHex);
-    final bgColor = _fromHex(widget.category.bgColorHex);
+    final bgColor = isDark
+        ? color.withValues(alpha: 0.18)
+        : _fromHex(widget.category.bgColorHex);
+    final cardColor = isDark ? AppColors.darkCard : AppColors.cardWhite;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textDark;
+    final textLight = isDark ? AppColors.darkTextSecondary : AppColors.textLight;
 
     return SlideTransition(
       position: _slide,
@@ -586,11 +657,11 @@ class _CategoryCardState extends State<_CategoryCard>
             margin: const EdgeInsets.only(bottom: 14),
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: AppColors.cardWhite,
+              color: cardColor,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.shadow,
+                  color: isDark ? AppColors.darkShadow : AppColors.shadow,
                   blurRadius: _pressed ? 4 : 12,
                   offset: Offset(0, _pressed ? 2 : 6),
                 ),
@@ -619,19 +690,16 @@ class _CategoryCardState extends State<_CategoryCard>
                     children: [
                       Text(
                         widget.category.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textDark,
+                          color: textPrimary,
                         ),
                       ),
                       const SizedBox(height: 3),
                       Text(
                         widget.category.description,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textLight,
-                        ),
+                        style: TextStyle(fontSize: 12, color: textLight),
                       ),
                     ],
                   ),

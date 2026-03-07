@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
-import 'home_page.dart';
+import '../main.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (mounted) {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const HomePage(),
+          pageBuilder: (_, __, ___) => const MainScaffold(),
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(opacity: animation, child: child);
           },
@@ -230,8 +230,8 @@ class _SplashScreenState extends State<SplashScreen>
       ),
       child: const Center(
         child: Text(
-          '✦',
-          style: TextStyle(fontSize: 52, color: Colors.white),
+          '📖',
+          style: TextStyle(fontSize: 52),
         ),
       ),
     );

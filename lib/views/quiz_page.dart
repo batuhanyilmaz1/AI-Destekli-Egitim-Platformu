@@ -28,6 +28,7 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
   int _score = 0;
   String? _selectedOption;
   bool _answered = false;
+  bool _paused = false;
   final List<Mistake> _mistakes = [];
   late int _remainingSeconds;
   Timer? _timer;
@@ -104,12 +105,20 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
         timer.cancel();
         return;
       }
+      if (_paused) return;
       setState(() => _remainingSeconds--);
       if (_remainingSeconds <= 0) {
         timer.cancel();
         _finishQuiz();
       }
     });
+  }
+
+  void _togglePause() {
+    setState(() => _paused = !_paused);
+    if (_paused) {
+      HapticFeedback.lightImpact();
+    }
   }
 
   void _selectOption(String option) {
@@ -219,7 +228,7 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
           child: child,
         );
       },
-      child: Scaffold(
+        child: Scaffold(
         backgroundColor: () {
           if (isCorrect) {
             return AppColors.correctGreenLight.withValues(alpha: 
@@ -232,42 +241,47 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
           return AppColors.background;
         }(),
         body: SafeArea(
-          child: AnimatedBuilder(
-            animation: _feedbackController,
-            builder: (context, _) {
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                color: isCorrect
-                    ? AppColors.correctGreenLight.withValues(alpha: 
-                        _feedbackOpacity.value * 0.25)
-                    : isWrong
-                        ? AppColors.wrongRedLight.withValues(alpha: 
+          child: Stack(
+            children: [
+              AnimatedBuilder(
+                animation: _feedbackController,
+                builder: (context, _) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    color: isCorrect
+                        ? AppColors.correctGreenLight.withValues(alpha: 
                             _feedbackOpacity.value * 0.25)
-                        : Colors.transparent,
-                child: Column(
-                  children: [
-                    _buildTopBar(),
-                    _buildProgressBar(),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 16),
-                            _buildQuestionCard(question),
-                            const SizedBox(height: 20),
-                            ..._buildOptions(question),
-                            const SizedBox(height: 20),
-                            if (_answered) _buildFeedbackBanner(isCorrect, question),
-                            const SizedBox(height: 20),
-                          ],
+                        : isWrong
+                            ? AppColors.wrongRedLight.withValues(alpha: 
+                                _feedbackOpacity.value * 0.25)
+                            : Colors.transparent,
+                    child: Column(
+                      children: [
+                        _buildTopBar(),
+                        _buildProgressBar(),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 16),
+                                _buildQuestionCard(question),
+                                const SizedBox(height: 20),
+                                ..._buildOptions(question),
+                                const SizedBox(height: 20),
+                                if (_answered) _buildFeedbackBanner(isCorrect, question),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            },
+                  );
+                },
+              ),
+              if (_paused) _buildPauseOverlay(),
+            ],
           ),
         ),
       ),
@@ -321,6 +335,26 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
               ],
             ),
           ),
+          // Pause button
+          GestureDetector(
+            onTap: _togglePause,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.cardWhite,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(color: AppColors.shadow, blurRadius: 4, offset: const Offset(0, 2))
+                ],
+              ),
+              child: Icon(
+                _paused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+                color: AppColors.textDark,
+                size: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
           // Timer
           AnimatedBuilder(
             animation: _shakeController,
@@ -563,6 +597,61 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPauseOverlay() {
+    return Container(
+      color: Colors.black.withValues(alpha: 0.6),
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: AppColors.cardWhite,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('⏸️', style: TextStyle(fontSize: 48)),
+              const SizedBox(height: 16),
+              const Text(
+                'Test Duraklatıldı',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Hazır olduğunda devam et',
+                style: TextStyle(fontSize: 14, color: AppColors.textMedium),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _togglePause,
+                  child: const Text('Devam Et'),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: () {
+                  setState(() => _paused = false);
+                  _showExitDialog();
+                },
+                child: const Text(
+                  'Testi Bırak',
+                  style: TextStyle(color: AppColors.wrongRed),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -86,5 +86,29 @@ class QuizCategory {
       colorHex: 'CC9494',
       bgColorHex: 'F5E0E0',
     ),
+    QuizCategory(
+      id: 'math',
+      name: 'Matematik',
+      emoji: '📐',
+      description: 'Sayılar, denklemler, geometri ve problem çözme',
+      colorHex: '6BAF92',
+      bgColorHex: 'D4EDE3',
+    ),
+    QuizCategory(
+      id: 'turkish',
+      name: 'Türkçe',
+      emoji: '📝',
+      description: 'Dil bilgisi, anlam, paragraf ve yazım kuralları',
+      colorHex: 'C4845A',
+      bgColorHex: 'F5DDD0',
+    ),
+    QuizCategory(
+      id: 'history',
+      name: 'Tarih',
+      emoji: '🏛️',
+      description: 'Türk tarihi, dünya tarihi ve medeniyetler',
+      colorHex: 'A07850',
+      bgColorHex: 'EEE0CA',
+    ),
   ];
 }

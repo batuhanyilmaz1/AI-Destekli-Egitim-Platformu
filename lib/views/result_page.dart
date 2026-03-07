@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/question_model.dart';
 import '../models/quiz_session_model.dart';
 import '../models/difficulty_model.dart';
+import '../models/gamification_model.dart';
 import '../services/database_service.dart';
 import '../services/gemini_service.dart';
+import '../services/gamification_service.dart';
 import '../theme/app_theme.dart';
-import 'home_page.dart';
+import '../main.dart';
 
 class ResultPage extends StatefulWidget {
   final QuizCategory category;
@@ -38,6 +41,8 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
 
   String? _mentorFeedback;
   bool _loadingFeedback = true;
+  int _xpEarned = 0;
+  List<BadgeId> _newBadges = [];
 
   @override
   void initState() {
@@ -45,6 +50,27 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
     _setupAnimations();
     _saveSession();
     _loadMentorFeedback();
+    _processGamification();
+  }
+
+  Future<void> _processGamification() async {
+    try {
+      final svc = GamificationService();
+      final earned = XPLevel.calculateEarned(
+          widget.score, widget.total, widget.difficulty.label);
+      final badges = await svc.onQuizComplete(
+        category: widget.category.name,
+        score: widget.score,
+        total: widget.total,
+        difficultyLabel: widget.difficulty.label,
+      );
+      if (mounted) {
+        setState(() {
+          _xpEarned = earned;
+          _newBadges = badges;
+        });
+      }
+    } catch (_) {}
   }
 
   void _setupAnimations() {
@@ -201,7 +227,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         children: [
           GestureDetector(
             onTap: () => Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const HomePage()),
+              MaterialPageRoute(builder: (_) => const MainScaffold()),
               (route) => false,
             ),
             child: Container(
@@ -294,22 +320,61 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
               ),
             ),
             const SizedBox(height: 6),
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.25),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                '${widget.difficulty.emoji} ${widget.difficulty.label} · ${widget.difficulty.durationLabel}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${widget.difficulty.emoji} ${widget.difficulty.label} · ${widget.difficulty.durationLabel}',
+                    style: const TextStyle(
+                      fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                if (_xpEarned > 0) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '⭐ +$_xpEarned XP',
+                      style: const TextStyle(
+                        fontSize: 12, color: Colors.white, fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            if (_newBadges.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('🏆 ', style: TextStyle(fontSize: 14)),
+                    Text(
+                      'Yeni rozet: ${_newBadges.map((b) => BadgeInfo.findById(b)?.title ?? '').join(', ')}',
+                      style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600),
+                    ),
+                  ],
                 ),
               ),
-            ),
+            ],
           ],
         ),
       ),
@@ -533,51 +598,71 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
     );
   }
 
+  void _shareResult() {
+    final percent = (_percentage * 100).round();
+    final text = '🌟 Lumina Quiz Sonucu\n\n'
+        '📚 Kategori: ${widget.category.name}\n'
+        '🎯 Zorluk: ${widget.difficulty.label}\n'
+        '✅ Sonuç: ${widget.score}/${widget.total} (%$percent)\n'
+        '⭐ Kazanılan XP: +$_xpEarned\n\n'
+        '$_gradeEmoji $_gradeText\n\n'
+        '#LuminaQuiz #ÖğrenmeZevki';
+    Share.share(text);
+  }
+
   Widget _buildActionButtons() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Column(
         children: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.sageGreen,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.sageGreen,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text(
+                    'Yeniden Dene',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
+                  ),
+                ),
               ),
-              child: const Text(
-                'Yeniden Dene',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white),
+              const SizedBox(width: 10),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.paleSoftBlue,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: IconButton(
+                  onPressed: _shareResult,
+                  icon: const Icon(Icons.share_rounded, color: AppColors.softBlue),
+                  tooltip: 'Paylaş',
+                ),
               ),
-            ),
+            ],
           ),
           const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
               onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const HomePage()),
+                MaterialPageRoute(builder: (_) => const MainScaffold()),
                 (route) => false,
               ),
               style: OutlinedButton.styleFrom(
-                side:
-                    const BorderSide(color: AppColors.sageGreen, width: 1.5),
+                side: const BorderSide(color: AppColors.sageGreen, width: 1.5),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
               ),
               child: const Text(
                 'Ana Menüye Dön',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.sageGreen),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.sageGreen),
               ),
             ),
           ),

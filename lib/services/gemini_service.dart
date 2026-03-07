@@ -5,7 +5,7 @@ import '../models/quiz_session_model.dart';
 import '../models/difficulty_model.dart';
 
 class GeminiService {
-  static const String _apiKey = 'AIzaSyBEgcoWNdNOJMjkHCz6DaF-42DiKm6en6A';
+  static const String _apiKey = 'your_api_key';
   static const String _model = 'gemini-2.5-flash';
 
   static const String _baseUrl =
@@ -28,13 +28,14 @@ class GeminiService {
   Future<List<QuizQuestion>> generateQuestions(
     String category, {
     DifficultyLevel difficulty = DifficultyLevel.medium,
+    int count = 20,
   }) async {
     final userPrompt = '''
 Kategori: $category
 Zorluk Seviyesi: ${difficulty.geminiLabel}
 Hedef Kitle: Ortaokul öğrencileri (Türkiye MEB müfredatı, 5-8. sınıf arası)
 
-Lütfen bu kategoride 20 adet çoktan seçmeli soru üret.
+Lütfen bu kategoride $count adet çoktan seçmeli soru üret.
 Sorular basit, anlaşılır Türkçe ile yazılmalı.
 Yanıtını SADECE aşağıdaki JSON formatında ver, başka hiçbir şey ekleme:
 
@@ -47,7 +48,7 @@ Yanıtını SADECE aşağıdaki JSON formatında ver, başka hiçbir şey ekleme
   }
 ]
 
-20 soru olmalı. Sadece JSON array döndür.
+$count soru olmalı. Sadece JSON array döndür.
 ''';
 
     final responseText = await _callApi(userPrompt);
@@ -191,8 +192,26 @@ Lütfen öğrenciye yönelik kısa ve samimi bir geri bildirim yaz. Kurallar:
     cleaned = cleaned.substring(startIdx, endIdx + 1).trim();
 
     final List<dynamic> jsonList = jsonDecode(cleaned);
-    return jsonList
-        .map((item) => QuizQuestion.fromJson(item as Map<String, dynamic>))
-        .toList();
+    final questions = <QuizQuestion>[];
+    for (final item in jsonList) {
+      try {
+        final q = QuizQuestion.fromJson(item as Map<String, dynamic>);
+        if (_isValid(q)) questions.add(q);
+      } catch (_) {
+        // Hatalı soru atlanır
+      }
+    }
+    if (questions.isEmpty) {
+      throw Exception('Geçerli soru üretilemedi. Tekrar dene.');
+    }
+    return questions;
+  }
+
+  bool _isValid(QuizQuestion q) {
+    if (q.question.trim().isEmpty) return false;
+    if (q.options.length != 4) return false;
+    if (!q.options.contains(q.answer)) return false;
+    if (q.options.any((o) => o.trim().isEmpty)) return false;
+    return true;
   }
 }
