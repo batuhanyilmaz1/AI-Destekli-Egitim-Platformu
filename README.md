@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="image.png" alt="Lumina Quiz Banner" width="180"/>
-
 # ✦ LUMINA QUIZ
 ### AI Destekli Eğitim Uygulaması
 
@@ -23,12 +21,16 @@
 <table>
   <tr>
     <td align="center">
-      <img src="images/ss1.png" width="260" alt="Ana Sayfa"/>
+      <img src="images/ss3.png" width="260" alt="Ana Sayfa"/>
       <br/><b>Ana Sayfa & Kategoriler</b>
     </td>
     <td align="center">
-      <img src="images/ss2.png" width="260" alt="Quiz & Sonuç"/>
+      <img src="images/ss1.png" width="260" alt="Quiz & Sonuç"/>
       <br/><b>Quiz & AI Mentor Sonucu</b>
+    </td>
+    <td align="center">
+      <img src="images/ss2.png" width="260" alt="Quiz & Sonuç"/>
+      <br/><b>Kitapçık & Tekrar konuları</b>
     </td>
   </tr>
 </table>
