@@ -3,7 +3,7 @@ import '../main.dart';
 import '../models/question_model.dart';
 import '../models/difficulty_model.dart';
 import '../models/gamification_model.dart';
-import '../services/gemini_service.dart';
+import '../services/claude_service.dart';
 import '../services/gamification_service.dart';
 import '../services/badge_notification_service.dart';
 import '../theme/app_theme.dart';
@@ -48,8 +48,9 @@ class _DailyChallengePageState extends State<DailyChallengePage>
     });
 
     try {
-      final questions = await GeminiService().generateQuestions(
+      final questions = await ClaudeService().generateQuestions(
         cat.name,
+        categoryId: cat.id,
         difficulty: DifficultyLevel.medium,
         count: 5,
       );

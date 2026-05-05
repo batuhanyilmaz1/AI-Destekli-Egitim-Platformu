@@ -507,7 +507,7 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Row(children: [Text('📖 '), Text('Lumina Quiz')]),
         content: const Text(
           'AI destekli ortaokul eğitim quiz uygulaması.\n\n'
-          'Gemini AI ile desteklenen sorular, XP sistemi, rozet koleksiyonu ve çok daha fazlası sizi bekliyor! 🌟',
+          'Claude ile desteklenen sorular, XP sistemi, rozet koleksiyonu ve çok daha fazlası sizi bekliyor! 🌟',
           style: TextStyle(height: 1.6),
         ),
         actions: [

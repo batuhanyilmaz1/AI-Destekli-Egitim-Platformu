@@ -91,8 +91,6 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    Tween<double>(begin: 1.0, end: 1.05)
-        .animate(CurvedAnimation(parent: _correctController, curve: Curves.easeOut));
   }
 
   void _animateQuestion() {

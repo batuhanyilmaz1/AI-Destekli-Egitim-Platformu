@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'services/database_service.dart';
 import 'services/badge_notification_service.dart';
@@ -18,6 +19,12 @@ final ValueNotifier<int> newBadgeCountNotifier = ValueNotifier(0);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (_) {
+    // .env yoksa veya asset yüklenemezse: --dart-define=CLAUDE_API_KEY=... kullanılabilir.
+  }
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

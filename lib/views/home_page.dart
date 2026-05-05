@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/question_model.dart';
 import '../models/difficulty_model.dart';
-import '../services/gemini_service.dart';
+import '../services/claude_service.dart';
 import '../services/database_service.dart';
 import '../theme/app_theme.dart';
 import 'quiz_page.dart';
@@ -74,9 +74,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
 
     try {
-      final service = GeminiService();
+      final service = ClaudeService();
       final questions = await service.generateQuestions(
         category.name,
+        categoryId: category.id,
         difficulty: difficulty,
       );
 
@@ -118,6 +119,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final cleanMsg = message.replaceFirst('Exception: ', '');
     final isQuota = cleanMsg.contains('kota') || cleanMsg.contains('quota') ||
         cleanMsg.contains('rate') || cleanMsg.contains('429');
+    final isAuth = cleanMsg.contains('anahtarı') ||
+        cleanMsg.contains('API anahtarı') ||
+        cleanMsg.contains('Unauthorized');
 
     showDialog(
       context: context,
@@ -125,10 +129,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            Text(isQuota ? '⏳' : '⚠️',
+            Text(isQuota ? '⏳' : isAuth ? '🔑' : '⚠️',
                 style: const TextStyle(fontSize: 20)),
             const SizedBox(width: 8),
-            Text(isQuota ? 'Kota Aşıldı' : 'Bir sorun oluştu'),
+            Text(isQuota
+                ? 'Kota Aşıldı'
+                : isAuth
+                    ? 'API anahtarı'
+                    : 'Bir sorun oluştu'),
           ],
         ),
         content: Text(

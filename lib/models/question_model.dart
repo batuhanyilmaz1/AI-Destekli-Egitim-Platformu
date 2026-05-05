@@ -47,28 +47,12 @@ class QuizCategory {
 
   static const List<QuizCategory> all = [
     QuizCategory(
-      id: 'physics',
-      name: 'Fizik',
-      emoji: '⚛️',
-      description: 'Mekanik, elektrik, optik ve daha fazlası',
-      colorHex: '89B4CC',
-      bgColorHex: 'D6E9F3',
-    ),
-    QuizCategory(
-      id: 'chemistry',
-      name: 'Kimya',
-      emoji: '🧪',
-      description: 'Elementler, bileşikler ve tepkimeler',
-      colorHex: 'B89FCC',
-      bgColorHex: 'E8DFF5',
-    ),
-    QuizCategory(
-      id: 'biology',
-      name: 'Biyoloji',
-      emoji: '🌿',
-      description: 'Hücreler, organizmalar ve ekosistemler',
-      colorHex: '87A878',
-      bgColorHex: 'DDE8D7',
+      id: 'fen',
+      name: 'Fen Bilimleri',
+      emoji: '🔬',
+      description: 'Fizik, kimya ve biyoloji — tek çatı altında',
+      colorHex: '6B9BD1',
+      bgColorHex: 'E3EEF9',
     ),
     QuizCategory(
       id: 'cs',

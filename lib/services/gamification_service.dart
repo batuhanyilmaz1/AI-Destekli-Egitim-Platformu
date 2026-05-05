@@ -126,9 +126,7 @@ class GamificationService {
     // Kategori rozetleri
     final catCount = catCounts[category] ?? 0;
     if (catCount >= 3) {
-      if (category.contains('Fizik')) await tryAward(BadgeId.physicist);
-      if (category.contains('Kimya')) await tryAward(BadgeId.chemist);
-      if (category.contains('Biyoloji')) await tryAward(BadgeId.biologist);
+      if (category.contains('Fen')) await tryAward(BadgeId.fenScholar);
       if (category.contains('Bilgisayar')) await tryAward(BadgeId.programmer);
       if (category.contains('İngilizce')) await tryAward(BadgeId.linguist);
       if (category.contains('Matematik')) await tryAward(BadgeId.mathematician);
@@ -137,7 +135,7 @@ class GamificationService {
     }
 
     // Tüm kategoriler
-    final allCatKeywords = ['Fizik', 'Kimya', 'Biyoloji', 'Bilgisayar', 'İngilizce', 'Matematik', 'Türkçe', 'Tarih'];
+    final allCatKeywords = ['Fen', 'Bilgisayar', 'İngilizce', 'Matematik', 'Türkçe', 'Tarih'];
     final testedCats = catCounts.keys.toList();
     final allTested = allCatKeywords.every((c) => testedCats.any((t) => t.contains(c)));
     if (allTested) await tryAward(BadgeId.allCategories);

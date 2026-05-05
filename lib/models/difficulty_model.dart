@@ -80,7 +80,8 @@ enum DifficultyLevel {
     }
   }
 
-  String get geminiLabel {
+  /// Yapay zekâ isteminde kullanılan zorluk açıklaması.
+  String get aiDifficultyLabel {
     switch (this) {
       case DifficultyLevel.easy:
         return 'kolay (5-6. sınıf ortaokul seviyesi, temel kavramlar)';

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:share_plus/share_plus.dart';
 import '../models/question_model.dart';
 import '../models/quiz_session_model.dart';
 import '../models/difficulty_model.dart';
 import '../models/gamification_model.dart';
 import '../services/database_service.dart';
-import '../services/gemini_service.dart';
+import '../services/claude_service.dart';
 import '../services/gamification_service.dart';
 import '../theme/app_theme.dart';
 import '../main.dart';
@@ -136,7 +137,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
 
   Future<void> _loadMentorFeedback() async {
     try {
-      final service = GeminiService();
+      final service = ClaudeService();
       final feedback = await service.analyzeMistakes(
         widget.category.name,
         widget.mistakes,
@@ -469,7 +470,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                       ),
                     ),
                     Text(
-                      'Gemini AI tarafından oluşturuldu',
+                      'Claude (Anthropic) ile oluşturuldu',
                       style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textLight,
@@ -504,12 +505,34 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                 ),
               )
             else
-              Text(
-                _mentorFeedback ?? '',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textMedium,
-                  height: 1.6,
+              MarkdownBody(
+                data: _mentorFeedback ?? '',
+                selectable: true,
+                styleSheet: MarkdownStyleSheet(
+                  p: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textMedium,
+                    height: 1.6,
+                  ),
+                  strong: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textDark,
+                    height: 1.6,
+                  ),
+                  em: const TextStyle(
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    color: AppColors.textMedium,
+                    height: 1.6,
+                  ),
+                  listBullet: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textMedium,
+                    height: 1.6,
+                  ),
+                  listIndent: 20,
+                  blockSpacing: 8,
                 ),
               ),
           ],

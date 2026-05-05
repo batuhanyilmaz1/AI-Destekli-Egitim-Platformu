@@ -19,7 +19,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
   int _currentCard = 0;
   bool _flipped = false;
 
-  static const List<String> _categoryKeys = ['physics', 'chemistry', 'biology', 'cs', 'english', 'math', 'turkish', 'history'];
+  static const List<String> _categoryKeys = ['fen', 'cs', 'english', 'math', 'turkish', 'history'];
 
   @override
   void initState() {

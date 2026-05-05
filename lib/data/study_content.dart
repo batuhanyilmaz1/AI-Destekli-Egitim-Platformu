@@ -24,9 +24,7 @@ class StudySection {
 
 class StudyContent {
   static const Map<String, List<StudyTopic>> content = {
-    'physics': _physics,
-    'chemistry': _chemistry,
-    'biology': _biology,
+    'fen': _fen,
     'cs': _cs,
     'english': _english,
     'math': _math,
@@ -642,6 +640,13 @@ class StudyContent {
         ),
       ],
     ),
+  ];
+
+  /// Fizik + Kimya + Biyoloji — tek Fen Bilimleri çatısı (çalışma kitabı).
+  static const List<StudyTopic> _fen = [
+    ..._physics,
+    ..._chemistry,
+    ..._biology,
   ];
 
   // ─────────────────── BİLGİSAYAR & PROGRAMLAMA ───────────────────
@@ -1565,4 +1570,17 @@ class StudyContent {
       ],
     ),
   ];
+
+  /// AI soru üretiminde kullanılmak üzere: [StudyContent.content] ile aynı ders başlıkları.
+  static String quizSyllabusLine(String categoryId) {
+    if (categoryId == 'fen') {
+      return 'Bu kategori ortaokul Fen Bilimleri (fizik, kimya, biyoloji) müfredatını kapsar. '
+          'Ortaokul düzeyinde sorular üret; üç disiplin arasında dengeli dağılım yap (yaklaşık üçte bir fizik, üçte bir kimya, üçte bir biyoloji). '
+          'Her soru tek bir disipline odaklansın.';
+    }
+    final topics = content[categoryId];
+    if (topics == null || topics.isEmpty) return '';
+    final names = topics.map((t) => t.title).join('; ');
+    return 'Bu kategori konu başlıkları (soruları bunlar arasında dengeli üret): $names.';
+  }
 }
