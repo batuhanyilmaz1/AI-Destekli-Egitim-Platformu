@@ -11,37 +11,12 @@
 
 ---
 
-## 📱 Ekran Görüntüleri
-
-<div align="center">
-<table>
-  <tr>
-    <td align="center">
-      <img src="images/ss3.png" width="260" alt="Ana Sayfa"/>
-      <br/><b>Ana Sayfa & Kategoriler</b>
-    </td>
-    <td align="center">
-      <img src="images/ss1.png" width="260" alt="Quiz & Sonuç"/>
-      <br/><b>Quiz & AI Mentor Sonucu</b>
-    </td>
-    <td align="center">
-      <img src="images/ss2.png" width="260" alt="Kitapçık"/>
-      <br/><b>Kitapçık & Tekrar Konuları</b>
-    </td>
-  </tr>
-</table>
-</div>
-
----
-
 ## 🎬 Demo Video
 
 <div align="center">
 
 <video src="images/video.mp4" controls width="320" style="border-radius:16px">
-  <a href="images/video.mp4">
-    <img src="images/ss1.png" width="320" alt="Demo Videoyu İzle"/>
-  </a>
+  <a href="images/video.mp4">Demo videosunu izle</a>
 </video>
 
 > *Video oynatılmıyorsa [buraya tıkla](images/video.mp4)*
